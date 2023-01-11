@@ -1,5 +1,6 @@
 package br.com.attornatus.controller;
 
+import br.com.attornatus.model.Address;
 import br.com.attornatus.model.Person;
 import br.com.attornatus.service.PersonService;
 import org.springframework.web.bind.annotation.*;
@@ -34,5 +35,10 @@ public class PersonController {
     @PutMapping("/{id}")
     public void updatePerson(@PathVariable Long id, @RequestBody Person person) {
         personService.updatePerson(id, person);
+    }
+
+    @PostMapping("/{id}/address")
+    public void addAddress(@PathVariable Long id, @RequestBody Address address) {
+        personService.addAddress(id, address);
     }
 }

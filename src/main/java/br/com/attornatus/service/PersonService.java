@@ -1,6 +1,9 @@
 package br.com.attornatus.service;
 
+import br.com.attornatus.model.Address;
 import br.com.attornatus.model.Person;
+import br.com.attornatus.model.enums.AddressType;
+import br.com.attornatus.repository.AddressRepository;
 import br.com.attornatus.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +13,11 @@ import java.util.List;
 public class PersonService {
 
     private final PersonRepository personRepository;
+    private final AddressRepository addressRepository;
 
-    public PersonService(PersonRepository personRepository) {
+    public PersonService(PersonRepository personRepository, AddressRepository addressRepository) {
         this.personRepository = personRepository;
+        this.addressRepository = addressRepository;
     }
 
     public List<Person> getAllPeople() {
@@ -35,10 +40,44 @@ public class PersonService {
         Person updatedPerson = personRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No person with the id: " + id));
 
+
+        //  --- Atualiza a pessoa
         updatedPerson.setName(person.getName());
         updatedPerson.setDateOfBirth(person.getDateOfBirth());
-        updatedPerson.setAddresses(person.getAddresses());  // TODO: Após implementar o PUT dos
-                                                            // endereços fazer o update aqui também
         personRepository.save(updatedPerson);
+
+        //  --- Atualiza os endereços
+        // Caso existam endereços para a pessoa e o endereço principal
+        // tenha sido excluido um deles automaticamente se torna o principal.
+        boolean hasMainAddress = person.getAddresses().stream()
+                .anyMatch(address -> address.getType() == AddressType.MAIN_ADDRESS);
+        if (person.getAddresses().size() > 0 && !hasMainAddress) {
+            Address address = person.getAddresses().get(0);
+            address.setType(AddressType.MAIN_ADDRESS);
+            addressRepository.save(address);
+        }
+
+        // Exclui os endereços antigos e salva os novos (para caso alguma alterção tenha sido feita)
+        updatedPerson.getAddresses().forEach(address -> addressRepository.deleteById(address.getId()));
+        person.getAddresses().forEach(addressRepository::save);
+
+    }
+
+    public void addAddress(Long personId, Address address) {
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new IllegalArgumentException("No person with the id: " + personId));
+
+        // Testa se o novo endereço é o endereço principal e caso
+        // seja atualiza os outros endereços
+        if (address.getType() == AddressType.MAIN_ADDRESS) {
+            person.getAddresses()
+                    .forEach(currentAddress -> {
+                        currentAddress.setType(AddressType.OTHER_ADDRESS);
+                        addressRepository.save(currentAddress);
+                    });
+        }
+
+        address.setPerson(person);
+        addressRepository.save(address);
     }
 }
