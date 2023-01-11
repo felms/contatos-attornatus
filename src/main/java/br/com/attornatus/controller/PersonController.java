@@ -41,4 +41,9 @@ public class PersonController {
     public void addAddress(@PathVariable Long id, @RequestBody Address address) {
         personService.addAddress(id, address);
     }
+
+    @GetMapping("/{personId}/addresses")
+    public List<Address> addressesByPerson(@PathVariable Long personId) {
+        return personService.addressesByPerson(personId);
+    }
 }

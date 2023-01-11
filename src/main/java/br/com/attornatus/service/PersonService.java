@@ -80,4 +80,11 @@ public class PersonService {
         address.setPerson(person);
         addressRepository.save(address);
     }
+
+    public List<Address> addressesByPerson(Long personId) {
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new IllegalArgumentException("No person with the id: " + personId));
+
+        return person.getAddresses();
+    }
 }
