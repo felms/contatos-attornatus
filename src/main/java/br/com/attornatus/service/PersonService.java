@@ -23,4 +23,11 @@ public class PersonService {
         return personRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No user with the id: " + id));
     }
+
+    public void addPerson(Person person) {
+        boolean exists = personRepository.existsById(person.getId());
+        if (!exists) {
+            personRepository.save(person);
+        }
+    }
 }
