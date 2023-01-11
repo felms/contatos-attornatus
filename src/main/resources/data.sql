@@ -31,8 +31,8 @@ INSERT INTO person (id, name, date_of_birth) VALUES (3, 'Andy Weir', '1972-06-16
 INSERT INTO address (id, street, zipcode, number, city, state, type, person_id) VALUES (1, 'Rua Afonso Cavalcanti', '20211-110', 455, 'Rio de Janeiro', 'Rio de Janeiro', 'MAIN_ADDRESS', 1);
 
 INSERT INTO address (id, street, zipcode, number, city, state, type, person_id) VALUES (2, 'K Street', '68508', 1445, 'Lincoln', 'Nebraske', 'MAIN_ADDRESS', 2);
-INSERT INTO address (id, street, zipcode, number, city, state, type, person_id) VALUES (3, 'Farnam Street', '68183', 1819, 'Omaha', 'Nebraske', 'OTHER_ADDRESS', 2);
+INSERT INTO address (id, street, zipcode, number, city, state, type, person_id) VALUES (3, 'Farnam Street', '68183', 1819, 'Omaha', 'Nebraske', 'SECONDARY_ADDRESS', 2);
 
 INSERT INTO address (id, street, zipcode, number, city, state, type, person_id) VALUES (4, 'Russell Boulevard', '95616', 23, 'Davis', 'California', 'MAIN_ADDRESS', 3);
-INSERT INTO address (id, street, zipcode, number, city, state, type, person_id) VALUES (5, '10th St', '95814', 1315, 'Sacramento', 'California', 'OTHER_ADDRESS', 3);
+INSERT INTO address (id, street, zipcode, number, city, state, type, person_id) VALUES (5, '10th St', '95814', 1315, 'Sacramento', 'California', 'SECONDARY_ADDRESS', 3);
 

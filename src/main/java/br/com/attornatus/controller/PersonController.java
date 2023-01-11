@@ -46,4 +46,10 @@ public class PersonController {
     public List<Address> addressesByPerson(@PathVariable Long personId) {
         return personService.addressesByPerson(personId);
     }
+
+    @PutMapping("/{personId}/address")
+    public void updateAddress(@PathVariable Long personId, @RequestBody Address address) {
+        personService.updateAddress(personId, address);
+    }
+
 }

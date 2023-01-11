@@ -8,6 +8,7 @@ import br.com.attornatus.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PersonService {
@@ -72,7 +73,7 @@ public class PersonService {
         if (address.getType() == AddressType.MAIN_ADDRESS) {
             person.getAddresses()
                     .forEach(currentAddress -> {
-                        currentAddress.setType(AddressType.OTHER_ADDRESS);
+                        currentAddress.setType(AddressType.SECONDARY_ADDRESS);
                         addressRepository.save(currentAddress);
                     });
         }
@@ -86,5 +87,50 @@ public class PersonService {
                 .orElseThrow(() -> new IllegalArgumentException("No person with the id: " + personId));
 
         return person.getAddresses();
+    }
+
+    public void updateAddress(Long personId, Address address) {
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new IllegalArgumentException("No person with the id: " + personId));
+
+        if (!addressRepository.existsById(address.getId())) {
+           throw  new IllegalArgumentException("No address with the id: " + address.getId());
+        }
+
+        if (person.getAddresses().size() == 1) {
+
+            // Se existe apenas um endereço ele deve ser o principal
+            address.setType(AddressType.MAIN_ADDRESS);
+
+        } else if (address.getType() == AddressType.MAIN_ADDRESS) {
+
+            // Se o endereço atualizado é o novo endereço principal
+            // todos os outros se tornam secundários
+
+            person.getAddresses().forEach(currentAddress -> {
+                currentAddress.setType(AddressType.SECONDARY_ADDRESS);
+                addressRepository.save(currentAddress);
+            });
+
+        } else {
+
+            // Se o endereço atualizado era o principal e agora não é
+            // mais principal eu escolho um novo principal
+            List<Address> personAddresses = person.getAddresses().stream()
+                    .filter(personAddress -> !Objects.equals(personAddress.getId(), address.getId()))
+                    .toList();
+
+            boolean hasMainAddress = personAddresses.stream()
+                    .anyMatch(personAddress -> personAddress.getType() == AddressType.MAIN_ADDRESS);
+
+            if (address.getType() != AddressType.MAIN_ADDRESS && !hasMainAddress) {
+                Address a = personAddresses.get(0);
+                a.setType(AddressType.MAIN_ADDRESS);
+                addressRepository.save(a);
+            }
+        }
+
+        address.setPerson(person);
+        addressRepository.save(address);
     }
 }
