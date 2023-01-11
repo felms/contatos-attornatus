@@ -18,4 +18,9 @@ public class PersonService {
     public List<Person> getAllPeople() {
         return personRepository.findAll();
     }
+
+    public Person getById(Long id) {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No user with the id: " + id));
+    }
 }
