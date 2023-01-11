@@ -21,7 +21,7 @@ public class PersonService {
 
     public Person getById(Long id) {
         return personRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No user with the id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("No person with the id: " + id));
     }
 
     public void addPerson(Person person) {
@@ -29,5 +29,16 @@ public class PersonService {
         if (!exists) {
             personRepository.save(person);
         }
+    }
+
+    public void updatePerson(Long id, Person person) {
+        Person updatedPerson = personRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No person with the id: " + id));
+
+        updatedPerson.setName(person.getName());
+        updatedPerson.setDateOfBirth(person.getDateOfBirth());
+        updatedPerson.setAddresses(person.getAddresses());  // TODO: Após implementar o PUT dos
+                                                            // endereços fazer o update aqui também
+        personRepository.save(updatedPerson);
     }
 }

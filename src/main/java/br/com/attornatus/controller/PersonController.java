@@ -30,4 +30,9 @@ public class PersonController {
     public void addPerson(@RequestBody Person person) {
         personService.addPerson(person);
     }
+
+    @PutMapping("/{id}")
+    public void updatePerson(@PathVariable Long id, @RequestBody Person person) {
+        personService.updatePerson(id, person);
+    }
 }
